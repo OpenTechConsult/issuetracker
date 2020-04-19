@@ -4,6 +4,7 @@
   "description": "A project to roughly simulate Jira issue tracker of Github Issue Tracker",
   "main": "index.js",
   "scripts": {
+    "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,7 +14,7 @@
   "keywords": [
     "React",
     "JSX",
-    "Mern",
+    "MERN",
     "Node",
     "MongoDB"
   ],
@@ -22,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/OpenTechConsult/issuetracker/issues"
   },
-  "homepage": "https://github.com/OpenTechConsult/issuetracker#readme"
+  "homepage": "https://github.com/OpenTechConsult/issuetracker#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
