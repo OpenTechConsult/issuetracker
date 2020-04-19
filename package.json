@@ -1,0 +1,26 @@
+{
+  "name": "issuetracker",
+  "version": "1.0.0",
+  "description": "A project to roughly simulate Jira issue tracker of Github Issue Tracker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenTechConsult/issuetracker.git"
+  },
+  "keywords": [
+    "React",
+    "JSX",
+    "Mern",
+    "Node",
+    "MongoDB"
+  ],
+  "author": "OpenTech-Consult",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OpenTechConsult/issuetracker/issues"
+  },
+  "homepage": "https://github.com/OpenTechConsult/issuetracker#readme"
+}
