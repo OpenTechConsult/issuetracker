@@ -6,17 +6,17 @@
     <title>Document</title>
     <script src="https://unpkg.com/react@16.7.0/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16.7.0/umd/react-dom.development.js"></script>
-    <style>
-        .blue {
-            color: blue;
-        }
-    </style>
+    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+
 </head>
 <body>
     <div id="contents"></div>
-    <script>
-        const element = React.createElement('div', {title: 'Outer div'}, 
-                React.createElement('h1', {className: 'blue'}, 'Hello World!'));
+    <script type="text/babel">
+        const element = (
+            <div title="Outer div">
+                <h1>Hello World!</h1>
+            </div>
+        );
         ReactDOM.render(element, document.getElementById('contents'));
     </script>
 </body>
