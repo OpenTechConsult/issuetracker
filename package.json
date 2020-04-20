@@ -4,7 +4,9 @@
   "description": "A project to roughly simulate Jira issue tracker of Github Issue Tracker",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "nodemon -w server server/server.js",
+    "compile": "babel src --out-dir public",
+    "watch": "babel src --out-dir public --watch --verbose",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,7 +27,8 @@
   },
   "homepage": "https://github.com/OpenTechConsult/issuetracker#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "nodemon": "^1.19.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
