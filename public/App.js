@@ -102,7 +102,7 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
 
     _this = _super3.call(this);
     _this.state = {
-      issues: initialIssues
+      issues: []
     };
     return _this;
   }
@@ -119,6 +119,22 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
       return /*#__PURE__*/React.createElement("table", {
         className: "bordered-table"
       }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "ID"), /*#__PURE__*/React.createElement("th", null, "Status"), /*#__PURE__*/React.createElement("th", null, "Owner"), /*#__PURE__*/React.createElement("th", null, "Created"), /*#__PURE__*/React.createElement("th", null, "Effort"), /*#__PURE__*/React.createElement("th", null, "Due date"), /*#__PURE__*/React.createElement("th", null, "Title"))), /*#__PURE__*/React.createElement("tbody", null, issueRows));
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.loadData();
+    }
+  }, {
+    key: "loadData",
+    value: function loadData() {
+      var _this2 = this;
+
+      setTimeout(function () {
+        _this2.setState({
+          issues: initialIssues
+        });
+      }, 500);
     }
   }]);
 
