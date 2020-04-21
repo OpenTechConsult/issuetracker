@@ -47,6 +47,11 @@ var initialIssues = [{
   due: new Date('2020-04-20'),
   title: 'Home page grid of article filter does not work'
 }];
+var sampleIssue = {
+  status: 'New',
+  owner: 'Pieta',
+  title: 'Completion date should be optional'
+};
 
 var IssueList = /*#__PURE__*/function (_React$Component) {
   _inherits(IssueList, _React$Component);
@@ -104,6 +109,9 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
     _this.state = {
       issues: []
     };
+    setTimeout(function () {
+      _this.createIssue(sampleIssue);
+    }, 2000);
     return _this;
   }
 
@@ -135,6 +143,17 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
           issues: initialIssues
         });
       }, 500);
+    }
+  }, {
+    key: "createIssue",
+    value: function createIssue(issue) {
+      issue.id = this.state.issues.length + 1;
+      issue.created = new Date();
+      var newIssueList = this.state.issues.slice();
+      newIssueList.push(issue);
+      this.setState({
+        issues: newIssueList
+      });
     }
   }]);
 
