@@ -47,11 +47,6 @@ var initialIssues = [{
   due: new Date('2020-04-20'),
   title: 'Home page grid of article filter does not work'
 }];
-var sampleIssue = {
-  status: 'New',
-  owner: 'Pieta',
-  title: 'Completion date should be optional'
-};
 
 var IssueList = /*#__PURE__*/function (_React$Component) {
   _inherits(IssueList, _React$Component);
@@ -173,16 +168,39 @@ var IssueAdd = /*#__PURE__*/function (_React$Component4) {
     _classCallCheck(this, IssueAdd);
 
     _this3 = _super4.call(this);
-    setTimeout(function () {
-      _this3.props.createIssue(sampleIssue);
-    }, 2000);
+    _this3.handleSubmit = _this3.handleSubmit.bind(_assertThisInitialized(_this3));
     return _this3;
   }
 
   _createClass(IssueAdd, [{
     key: "render",
     value: function render() {
-      return /*#__PURE__*/React.createElement("div", null, "This is a placeholder for a form to add an issue.");
+      return /*#__PURE__*/React.createElement("form", {
+        name: "issueAdd",
+        onSubmit: this.handleSubmit
+      }, /*#__PURE__*/React.createElement("input", {
+        type: "text",
+        name: "owner",
+        placeholder: "Owner"
+      }), /*#__PURE__*/React.createElement("input", {
+        type: "text",
+        name: "title",
+        placeholder: "Title"
+      }), /*#__PURE__*/React.createElement("button", null, "Add"));
+    }
+  }, {
+    key: "handleSubmit",
+    value: function handleSubmit(e) {
+      e.preventDefault();
+      var form = document.forms.issueAdd;
+      var issue = {
+        owner: form.owner.value,
+        title: form.title.value,
+        status: 'New'
+      };
+      this.props.createIssue(issue);
+      form.owner.value = "";
+      form.title.value = "";
     }
   }]);
 
