@@ -136,7 +136,7 @@ var IssueTable = /*#__PURE__*/function (_React$Component3) {
   function IssueTable() {
     _classCallCheck(this, IssueTable);
 
-    return _super3.call(this);
+    return _super3.apply(this, arguments);
   }
 
   _createClass(IssueTable, [{
