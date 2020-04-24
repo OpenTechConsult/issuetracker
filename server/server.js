@@ -4,11 +4,28 @@ const { ApolloServer } = require('apollo-server-express');
 
 let aboutMessage = "Issue Tracker API v1.0";
 
-
+const IssuesDB = [
+    {
+        id: 1, status: 'New', owner: 'Ravan', effort: 5,
+        created: new Date('2018-08-15'), due: undefined,
+        title: 'Error in console when clicking Add',
+    },
+    {
+        id: 2, status: 'Assigned', owner: 'Eddie', effort: 14,
+        created: new Date('2018-08-16'), due: new Date('2018-08-30'),
+        title: 'Missing bottom border on panel',
+    },
+    {
+        id: 3, status: 'Closed', owner: 'Sandro', effort: 1,
+        created: new Date('2020-04-20'), due: new Date('2020-04-20'),
+        title: 'Home page grid of article filter does not work',
+    }
+];
 
 const resolvers = {
     Query: {
         about: ()=> aboutMessage,
+        issueList,
     },
     Mutation: {
         setAboutMessage,
@@ -17,6 +34,10 @@ const resolvers = {
 
 function setAboutMessage(_, { message }) {
     return aboutMessage = message
+}
+
+function issueList() {
+    return IssuesDB;
 }
 
 const server = new ApolloServer({
