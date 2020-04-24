@@ -1,0 +1,8 @@
+type Query {
+    about: String!
+}
+
+type Mutation {
+    setAboutMessage(message: String!): String
+}
+
