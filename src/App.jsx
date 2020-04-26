@@ -60,11 +60,16 @@ class IssueList extends React.Component {
                 id
             }
         }`;
-        
+
+        const query = `mutation issueAdd($issue: IssueInputs!) {
+            issueAdd(issue: $issue) {
+                id
+            }
+        }`;       
         const response = await fetch('/graphql', {
             method: 'POST',
             headers: { 'Content-Type' : 'application/json'},
-            body: JSON.stringify({ query })
+            body: JSON.stringify({ query, variables: { issue} })
         });
         this.loadData();
     }

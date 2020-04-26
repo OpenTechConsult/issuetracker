@@ -125,7 +125,8 @@ var IssueList = /*#__PURE__*/function (_React$Component) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 query = "mutation {\n            issueAdd(issue:{\n                title: \"".concat(issue.title, "\",\n                owner: \"").concat(issue.owner, "\",\n                due: \"").concat(issue.due.toISOString(), "\",\n            }) {\n                id\n            }\n        }");
-                _context2.next = 3;
+                cons;
+                _context2.next = 4;
                 return fetch('/graphql', {
                   method: 'POST',
                   headers: {
@@ -136,11 +137,11 @@ var IssueList = /*#__PURE__*/function (_React$Component) {
                   })
                 });
 
-              case 3:
+              case 4:
                 response = _context2.sent;
                 this.loadData();
 
-              case 5:
+              case 6:
               case "end":
                 return _context2.stop();
             }
