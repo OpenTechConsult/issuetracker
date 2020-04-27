@@ -1,8 +1,8 @@
-const fs                        = require('fs');
-const express                   = require('express');
-const { ApolloServer }          = require('apollo-server-express');
-const { GraphQLScalarType }     = require('graphql');
-const { Kind }                  = require('graphql/language')
+const fs                                    = require('fs');
+const express                               = require('express');
+const { ApolloServer, UserInputError }      = require('apollo-server-express');
+const { GraphQLScalarType }                 = require('graphql');
+const { Kind }                              = require('graphql/language')
 
 let aboutMessage = "Issue Tracker API v1.0";
 
@@ -30,11 +30,17 @@ const GraphQLDate = new GraphQLScalarType({
     serialize(value) {
         return value.toISOString();
     },
+
+    // catch invalid date string when parsing the value
     parseValue(value) {
-        return new Date(value);
+        const dateValue = new Date(value);
+        return isNaN(dateValue) ? undefined : dateValue;
     },
     parseLiteral(ast) {
-        return (ast.kind == Kind.STRING) ? new Date(ast.value) : undefined;
+        if (ast.kind == Kind.STRING) {
+            const value = new Date(ast.value)
+            return isNaN(value) ? undefined : value;
+        }
     },
 });
 
@@ -55,10 +61,39 @@ function setAboutMessage(_, { message }) {
     return aboutMessage = message
 }
 
+// programmatic validation on the server side
+// must be called before saving a new issue 
+// is done in a separate function
+function issueValidate(issue) {
+    
+    // create an array to hold the error messages
+    // of failed validation
+    const errors = []
+
+    // check to see if the minimum length oh the issue's
+    // title is greater than 3. If not push a message
+    // in the errors array
+    if (issue.title.length < 3) {
+        errors.push('Field "Title" must be at least 3 characters long.')
+    }
+
+    // check whether the owner has a value when
+    // the status is set to Assigned
+    if (issue.status == 'Assigned' && !issue.owner) {
+        errors.push('Field "Owner" is required when status is "Assigned"');
+    }
+
+    // If we find that the errors array is not empty, we throw an error
+    // Apollo server recommends using UserInputError class that generate user errors
+    if (errors.length > 0) {
+        throw new UserInputError('Invalid input(s)', { errors });
+    }
+}
+
 function issueAdd(_, { issue }) {
+    issueValidate(issue);
     issue.created = new Date();
     issue.id = IssuesDB.length + 1;
-    if (issue.status == undefined) issue.status = 'New';
     IssuesDB.push(issue);
     return issue;
 }
@@ -67,9 +102,14 @@ function issueList() {
     return IssuesDB;
 }
 
+// Add the formatError configuration option to capture the error at the server
 const server = new ApolloServer({
     typeDefs: fs.readFileSync('./server/schema.graphql', 'utf-8'), 
     resolvers,
+    formatError: error => {
+        console.log(error);
+        return error;
+    },
 }); 
 
 const app     = express();
