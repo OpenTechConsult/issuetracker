@@ -7,6 +7,38 @@ function jsonDateReviver(key, value) {
     return value;
 }
 
+// Utility function that handles API calls and reports errors
+// errors can be transport errors due to network problems
+async function graphQLFetch (query, variables = {}) {
+    
+    // All transport error will be thrown from withing
+    // the call to fetch. So we wrap the call to fetch
+    // and subsequent retrieval of the body and parse 
+    // within a try-catch block
+    try {
+        const response = await fetch('/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({query, variables})
+        });
+        const body = await response.text();
+        const result = JSON.parse(body, jsonDateReviver);
+
+        if (result.errors) {
+            const error = result.errors[0];
+            if (error.extensions.code == 'BAD_USER_INPUT') {
+                const details = error.extensions.exception.errors.join('\n');
+                alert(`${error.message}:\n ${details}`);
+            } else {
+                alert(`${error.extensions.code}: ${error.message}`);
+            }
+        }
+        return result.data;
+    } catch (e) {
+        alert(`Error in sending data to the server : ${e.message}`);
+    }
+}
+
 class IssueList extends React.Component {
 
     constructor() {
@@ -33,21 +65,20 @@ class IssueList extends React.Component {
     
 
     async loadData() {
+        
         const query = `query {
             issueList {
                 id title status owner created effort due
             }
         }`;
-
-        const response = await fetch('/graphql', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({ query })
-        });
-
-        const body   = await response.text();
-        const result = JSON.parse(body, jsonDateReviver);
-        this.setState({ issues: result.data.issueList });
+        
+        // call the graphQLFetch utility function to send a 
+        // query, and if it returns a data set the state of
+        // the component
+        const data = await graphQLFetch(query);
+        if (data) {
+            this.setState({ issues: data.issueList })
+        }
     }
 
     async createIssue(issue) {
@@ -57,15 +88,12 @@ class IssueList extends React.Component {
                 id
             }
         }`;       
-        const response = await fetch('/graphql', {
-            method: 'POST',
-            headers: { 'Content-Type' : 'application/json'},
-            body: JSON.stringify({ query, variables: { issue} })
-        });
-        this.loadData();
+        const data = await graphQLFetch(query, { issue });
+        if (data) {
+            this.loadData();
+        }
+        
     }
-
-
 }
 
 class IssueFilter extends React.Component {
