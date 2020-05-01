@@ -2,9 +2,12 @@ const fs                                    = require('fs');
 const express                               = require('express');
 const { ApolloServer, UserInputError }      = require('apollo-server-express');
 const { GraphQLScalarType }                 = require('graphql');
-const { Kind }                              = require('graphql/language')
+const { Kind }                              = require('graphql/language');
+const { MongoClient }                       = require('mongodb');
 
 let aboutMessage = "Issue Tracker API v1.0";
+const url = 'mongodb://localhost/issuetracker';
+let db;
 
 const IssuesDB = [
     {
@@ -23,6 +26,13 @@ const IssuesDB = [
         title: 'Home page grid of article filter does not work',
     }
 ];
+
+async function connectToDb () {
+    const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
+    await client.connect();
+    console.log('Connected to MongoDB at', url);
+    db = client.db();
+}
 
 const GraphQLDate = new GraphQLScalarType({
     name: 'GraphQLDate',
@@ -98,8 +108,9 @@ function issueAdd(_, { issue }) {
     return issue;
 }
 
-function issueList() {
-    return IssuesDB;
+async function issueList() {
+    const issues = await db.collection('issues').find({}).toArray();
+    return issues;
 }
 
 // Add the formatError configuration option to capture the error at the server
@@ -112,9 +123,17 @@ const server = new ApolloServer({
     },
 }); 
 
+
 const app     = express();
 app.use(express.static('public'));
 server.applyMiddleware({ app, path: '/graphql' });
-app.listen(3000, function () {
-    console.log('App started on port 3000');
-});
+(async function () {
+    try {
+        await connectToDb();
+        app.listen(3000, function () {
+            console.log('App started on port 3000');
+        });
+    } catch (err) {
+        console.log('ERROR:', err);
+    }
+})();
