@@ -9,24 +9,6 @@ let aboutMessage = "Issue Tracker API v1.0";
 const url = 'mongodb://localhost/issuetracker';
 let db;
 
-const IssuesDB = [
-    {
-        id: 1, status: 'New', owner: 'Ravan', effort: 5,
-        created: new Date('2018-08-15'), due: undefined,
-        title: 'Error in console when clicking Add',
-    },
-    {
-        id: 2, status: 'Assigned', owner: 'Eddie', effort: 14,
-        created: new Date('2018-08-16'), due: new Date('2018-08-30'),
-        title: 'Missing bottom border on panel',
-    },
-    {
-        id: 3, status: 'Closed', owner: 'Sandro', effort: 1,
-        created: new Date('2020-04-20'), due: new Date('2020-04-20'),
-        title: 'Home page grid of article filter does not work',
-    }
-];
-
 async function connectToDb () {
     const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true});
     await client.connect();
@@ -100,12 +82,23 @@ function issueValidate(issue) {
     }
 }
 
-function issueAdd(_, { issue }) {
+async function getNextSequence(name) {
+    const result = await db.collection('counters').findOneAndUpdate(
+        { _id: name },
+        { $inc: { current: 1} },
+        { returnOriginal: false }
+    );
+    return result.value.current;
+}
+
+async function issueAdd(_, { issue }) {
+    const errors = [];
     issueValidate(issue);
     issue.created = new Date();
-    issue.id = IssuesDB.length + 1;
-    IssuesDB.push(issue);
-    return issue;
+    issue.id = await getNextSequence('issues');
+    const result = await db.collection('issues').insertOne(issue);
+    const savedIssue = await db.collection('issues').findOne({ _id: result.insertedId });
+    return savedIssue;
 }
 
 async function issueList() {
